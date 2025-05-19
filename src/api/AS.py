@@ -20,7 +20,7 @@ async def create_database():
         await conn.run_sync(Base.metadata.create_all)
     return {"status": "ok"}
 
-@router.get("/worker/{fio}")
+@router.get("/worker/find/{fio}")
 async def get_worker_by_fio(name: str, session: sessionDep):
     query = select(WorkersOrm).where(WorkersOrm.name == name)
     res = await session.execute(query)
@@ -105,3 +105,15 @@ async def show_attendance(names: str, session: sessionDep):
         return res
 
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+@router.get("/worker/names")
+async def get_all_names(session: sessionDep):
+    res = await session.execute(select(WorkersOrm.name))
+
+    return res.scalars().all()
+
+@router.get("/worker/ids")
+async def get_all_ids(session: sessionDep):
+    res = await session.execute(select(WorkersOrm.id))
+
+    return res.scalars().all()
